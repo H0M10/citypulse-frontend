@@ -39,6 +39,28 @@ export const getSession = async () => {
   return { session, error };
 };
 
+export const resetPassword = async (email) => {
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/#/auth?mode=reset',
+  });
+  return { data, error };
+};
+
+export const updatePassword = async (newPassword) => {
+  const { data, error } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+  return { data, error };
+};
+
+export const resendConfirmationEmail = async (email) => {
+  const { data, error } = await supabase.auth.resend({
+    type: 'signup',
+    email,
+  });
+  return { data, error };
+};
+
 // Database
 
 export const getProfile = async (userId) => {

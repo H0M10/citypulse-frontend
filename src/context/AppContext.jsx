@@ -31,14 +31,18 @@ export function AppProvider({ children }) {
 
     // Escuchar cambios de auth
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
         setUser(session?.user ?? null);
-        if (session?.user) {
+        if (event === 'SIGNED_IN' && session?.user) {
           loadUserData(session.user.id);
-        } else {
+        } else if (event === 'SIGNED_OUT') {
           setProfile(null);
           setSavedLocations([]);
           setExplorationHistory([]);
+        } else if (event === 'USER_UPDATED' && session?.user) {
+          loadUserData(session.user.id);
+        } else if (event === 'PASSWORD_RECOVERY') {
+          // Supabase maneja esto internamente, el usuario llegara a la pagina de reset
         }
       }
     );
